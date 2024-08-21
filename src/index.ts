@@ -1,26 +1,31 @@
-import { NativeModulesProxy, EventEmitter, Subscription } from 'expo-modules-core';
-
 // Import the native module. On web, it will be resolved to ExpoTeamViewer.web.ts
 // and on native platforms to ExpoTeamViewer.ts
-import ExpoTeamViewerModule from './ExpoTeamViewerModule';
-import ExpoTeamViewerView from './ExpoTeamViewerView';
-import { ChangeEventPayload, ExpoTeamViewerViewProps } from './ExpoTeamViewer.types';
+import ExpoTeamViewerModule from "./ExpoTeamViewerModule";
 
-// Get the native constant value.
-export const PI = ExpoTeamViewerModule.PI;
+const quickSupportName = "com.teamviewer.quicksupport.market";
 
-export function hello(): string {
-  return ExpoTeamViewerModule.hello();
-}
+export const checkIsQuickSupportInstalled = (): boolean => {
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
+  const isAppInstalled: boolean =
+    ExpoTeamViewerModule?.checkIsAppInstalled?.(quickSupportName);
+  console.log("checkIsQuickSupportInstalled", isAppInstalled);
+  return isAppInstalled ?? false;
+};
 
-export async function setValueAsync(value: string) {
-  return await ExpoTeamViewerModule.setValueAsync(value);
-}
+export const openQuickSupport = (): boolean => {
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
+  const isAppInstalled: boolean =
+    ExpoTeamViewerModule?.openApp(quickSupportName);
+  console.log("openQuickSupport", isAppInstalled);
 
-const emitter = new EventEmitter(ExpoTeamViewerModule ?? NativeModulesProxy.ExpoTeamViewer);
+  return isAppInstalled;
+};
 
-export function addChangeListener(listener: (event: ChangeEventPayload) => void): Subscription {
-  return emitter.addListener<ChangeEventPayload>('onChange', listener);
-}
+export const openQuickSupportInStore = (): boolean => {
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
+  const isAppInstalled: boolean =
+    ExpoTeamViewerModule?.openAppInStore(quickSupportName);
+  console.log("openQuickSupportInStore", isAppInstalled);
 
-export { ExpoTeamViewerView, ExpoTeamViewerViewProps, ChangeEventPayload };
+  return isAppInstalled;
+};

@@ -35,15 +35,33 @@ class ExpoTeamViewerModule : Module() {
 
     Function ("openApp") { packageName: String ->
       Log.d(AppName, "openApp $packageName")
-      val packageManager = appContext?.reactContext?.packageManager
-      val launchIntent = packageManager?.getLaunchIntentForPackage(packageName)
-      if (launchIntent != null) {
-
-        launchIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        appContext?.reactContext?.startActivity(launchIntent)
-        return@Function true;
+      val context = appContext?.reactContext
+      val packageManager = context?.packageManager
+      var launchIntent = packageManager?.getLaunchIntentForPackage(packageName)
+      if (launchIntent == null) {
+        // Try to find the main launcher activity explicitly
+        val intent = Intent(Intent.ACTION_MAIN, null)
+        intent.addCategory(Intent.CATEGORY_LAUNCHER)
+        intent.setPackage(packageName)
+        val resolveInfoList = packageManager?.queryIntentActivities(intent, 0)
+        if (resolveInfoList != null && resolveInfoList.isNotEmpty()) {
+          val resolveInfo = resolveInfoList[0]
+          val activityName = resolveInfo.activityInfo.name
+          launchIntent = Intent(Intent.ACTION_MAIN)
+          launchIntent.addCategory(Intent.CATEGORY_LAUNCHER)
+          launchIntent.setClassName(packageName, activityName)
+        }
       }
-      return@Function false;
+      if (launchIntent != null && context != null) {
+        launchIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+        try {
+          context.startActivity(launchIntent)
+          return@Function true
+        } catch (e: Exception) {
+          Log.e(AppName, "Failed to start activity: ${e.message}")
+        }
+      }
+      return@Function false
     }
 
     Function ("openAppInStore") { packageName: String ->

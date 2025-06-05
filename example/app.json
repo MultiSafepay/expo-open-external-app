@@ -24,6 +24,12 @@
     },
     "web": {
       "favicon": "./assets/favicon.png"
-    }
+    },
+    "extra": {
+      "eas": {
+        "projectId": "9683ac83-5934-4565-a7ac-2692fdd64fe8"
+      }
+    },
+    "owner": "multisafepay-org"
   }
 }

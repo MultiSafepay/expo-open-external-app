@@ -55,3 +55,7 @@ yarn-error.log
 
 # Expo
 .expo/*
+example/*.apk
+example/*.ipa
+example/*.tar.gz
+example/*.app
